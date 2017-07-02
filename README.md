@@ -1,1 +1,1 @@
-# 2d-game
+# Simple Graphics Library
