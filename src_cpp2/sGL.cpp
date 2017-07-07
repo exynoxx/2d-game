@@ -4,67 +4,7 @@ unsigned int VBO, VAO;
 unsigned int texture;
 GLFWwindow* window;
 
-int shaderProgram;
-
-char *read_file (char *name){
-    FILE *f = fopen(name, "rb");
-    fseek(f, 0, SEEK_END);
-    int fsize = ftell(f);
-    rewind(f);//fseek(f, 0, SEEK_SET);
-    char *string = new char[fsize + 1];
-    fread(string, fsize, 1, f);
-    fclose(f);
-    string[fsize] = 0;
-
-    return string;
-}
-
-void create_shader_program (){
-
-    /* --- VERTEX --- */
-    char *vertex_string = read_file ("src/vertex.vs");
-    int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertex_string, NULL);
-    glCompileShader(vertexShader);
-
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n");
-    }
-
-    /* --- FRAGMENT --- */
-    char *fragment_string = read_file ("src/fragment.fs");
-    int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragment_string, NULL);
-    glCompileShader(fragmentShader);
-
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success){
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n");
-    }
-
-    /* --- LINK --- */
-    int shaderint = glCreateProgram();
-    glAttachShader(shaderint, vertexShader);
-    glAttachShader(shaderint, fragmentShader);
-    glLinkProgram(shaderint);
-
-    glGetProgramiv(shaderint, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shaderint, 512, NULL, infoLog);
-        printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n");
-    }
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-    delete(vertex_string);
-    delete(fragment_string);
-
-    shaderProgram = shaderint;
-}
+int shaderProgramSource;
 
 void init_SGL()
 {
@@ -78,7 +18,7 @@ void init_SGL()
     //window init
     window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
 	if (window == NULL){
-		printf("Failed to create GLFW window\n");
+        std::cout << "Failed to create GLFW window" << std::endl;
 	    glfwTerminate();
 	    return;
 	}
@@ -87,12 +27,13 @@ void init_SGL()
 
     //glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
-    	printf("Failed to create GLFW window\n");
+        std::cout << "Failed to create GLFW window" << std::endl;
     	return;
 	}
 
     //start
     create_shader_program ();
+    shaderProgramSource = get_shader ();
 }
 
 void render (){
@@ -100,7 +41,7 @@ void render (){
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindTexture(GL_TEXTURE_2D, texture);
-    glUseProgram(shaderProgram);
+    glUseProgram(shaderProgramSource);
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -144,7 +85,7 @@ void create_rectangle () {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
-        printf("Failed to load texture\n");
+        std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
 
