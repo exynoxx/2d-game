@@ -1,12 +1,72 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <stdio.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#include <shaderloader.h>
+#include <sGL.h>
 
+unsigned int VBO, VAO;
+unsigned int texture;
+GLFWwindow* window;
 
-int main()
+int shaderProgram;
+
+char *read_file (char *name){
+    FILE *f = fopen(name, "rb");
+    fseek(f, 0, SEEK_END);
+    int fsize = ftell(f);
+    rewind(f);//fseek(f, 0, SEEK_SET);
+    char *string = new char[fsize + 1];
+    fread(string, fsize, 1, f);
+    fclose(f);
+    string[fsize] = 0;
+
+    return string;
+}
+
+void create_shader_program (){
+
+    /* --- VERTEX --- */
+    char *vertex_string = read_file ("src/vertex.vs");
+    int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertex_string, NULL);
+    glCompileShader(vertexShader);
+
+    int success;
+    char infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n");
+    }
+
+    /* --- FRAGMENT --- */
+    char *fragment_string = read_file ("src/fragment.fs");
+    int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragment_string, NULL);
+    glCompileShader(fragmentShader);
+
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if (!success){
+        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+        printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n");
+    }
+
+    /* --- LINK --- */
+    int shaderint = glCreateProgram();
+    glAttachShader(shaderint, vertexShader);
+    glAttachShader(shaderint, fragmentShader);
+    glLinkProgram(shaderint);
+
+    glGetProgramiv(shaderint, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(shaderint, 512, NULL, infoLog);
+        printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n");
+    }
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    delete(vertex_string);
+    delete(fragment_string);
+
+    shaderProgram = shaderint;
+}
+
+void init_SGL()
 {
     //init
     glfwInit();
@@ -16,11 +76,11 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
     //window init
-    GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+    window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
 	if (window == NULL){
 		printf("Failed to create GLFW window\n");
 	    glfwTerminate();
-	    return 1;
+	    return;
 	}
 	glfwMakeContextCurrent(window);
     //glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -28,11 +88,27 @@ int main()
     //glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     	printf("Failed to create GLFW window\n");
-    	return 1;
+    	return;
 	}
 
     //start
-    int shaderProgram = create_shader_program ();
+    create_shader_program ();
+}
+
+void render (){
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glUseProgram(shaderProgram);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+}
+
+void create_rectangle () {
 
     float vertices[] = {
         -0.5f, -0.5f, 0.0f,     0.0f, 0.0f,
@@ -40,7 +116,6 @@ int main()
          0.0f,  0.5f, 0.0f,     0.5f, 1.0f
     };
 
-    unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
@@ -55,8 +130,6 @@ int main()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-
-    unsigned int texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -82,23 +155,27 @@ int main()
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
-    while (!glfwWindowShouldClose(window))
-    {
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+    //loop render
 
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+    //delete
+}
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-
+void destruct_SGL () {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
     glfwTerminate();
-    return 0;
+}
+
+
+
+int main (){
+
+	init_SGL ();
+    create_rectangle ();
+    while (1) {
+        render ();
+    }
+    destruct_SGL ();
+
 }

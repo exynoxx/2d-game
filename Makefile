@@ -11,4 +11,4 @@ compile:
 
 cpp:
 	echo "####################### COMPILE #######################\n\n\n\n\n"
-	g++ -o main src_cpp2/*.cpp src_cpp2/*.c -Iinclude -I/usr/local/include -L /usr/local/lib/ -lglfw3 -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+	g++-7 -o main src_cpp2/*.cpp src_cpp2/*.c -Iinclude -I/usr/local/include -L /usr/local/lib/ -lglfw3 -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
