@@ -12,6 +12,7 @@
 void render ();
 void create_rectangle ();
 void init_SGL ();
+void destruct_SGL ();
 int main ();
 
 #endif
