@@ -8,6 +8,11 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <shader.h>
+#include <object.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 void render ();
 void create_rectangle ();

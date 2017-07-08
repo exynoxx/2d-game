@@ -1,7 +1,7 @@
 #include <sGL.h>
 
-unsigned int VBO, VAO;
-unsigned int texture;
+sgl_object tmp1;
+sgl_object tmp2;
 GLFWwindow* window;
 
 int shaderProgramSource;
@@ -40,16 +40,28 @@ void render (){
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(GL_TEXTURE_2D, tmp1.texture);
+
+    glm::mat4 transform;
+    //transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+    //transform = glm::rotate(transform, (float)glfwGetTime()/3, glm::vec3(0.0f, 0.0f, 1.0f));
+
+    unsigned int transformLoc = glGetUniformLocation(shaderProgramSource, "transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
     glUseProgram(shaderProgramSource);
-    glBindVertexArray(VAO);
+    glBindVertexArray(tmp1.VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
 }
 
-void create_rectangle () {
+void create_rectangle (sgl_object *tmp) {
+
+    unsigned int VAO;
+    unsigned int VBO;
+    unsigned int texture;
 
     float vertices[] = {
         -0.5f, -0.5f, 0.0f,     0.0f, 0.0f,
@@ -96,14 +108,19 @@ void create_rectangle () {
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
+    tmp->VAO = VAO;
+    tmp->VBO = VBO;
+    tmp->texture = texture;
+
     //loop render
 
     //delete
 }
 
+
 void destruct_SGL () {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+    glDeleteVertexArrays(1, &tmp1.VAO);
+    glDeleteBuffers(1, &tmp1.VBO);
 
     glfwTerminate();
 }
@@ -113,7 +130,8 @@ void destruct_SGL () {
 int main (){
 
 	init_SGL ();
-    create_rectangle ();
+    create_rectangle (&tmp1);
+    //create_rectangle (&tmp2);
     while (1) {
         render ();
     }
