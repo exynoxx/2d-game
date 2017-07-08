@@ -6,10 +6,11 @@ sgl_triangle::sgl_triangle () {
 	int shaderID = get_shader ();
     shaderConnection = glGetUniformLocation(shaderID, "transform");
 
+	//invert-y: invert all y-coordinats
 	float vertices[] = {
-        -0.5f, -0.5f, 0.0f,     0.0f, 0.0f,
-         0.5f, -0.5f, 0.0f,     1.0f, 0.0f,
-         0.0f,  0.5f, 0.0f,     0.5f, 1.0f
+        -0.5f, -0.5f, 0.0f,     0.0f, 1.0f,
+         0.5f, -0.5f, 0.0f,     1.0f, 1.0f,
+         0.0f,  0.5f, 0.0f,     0.5f, 0.0f
     };
 
     glGenVertexArrays(1, &VAO);
