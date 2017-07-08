@@ -1,10 +1,10 @@
 #include <sGL.h>
 
-sgl_object tmp1;
-sgl_object tmp2;
 GLFWwindow* window;
+int shaderID;
+unsigned int shaderConnection;
 
-int shaderProgramSource;
+std::vector<sgl_object> objs;
 
 void init_SGL()
 {
@@ -16,7 +16,7 @@ void init_SGL()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
     //window init
-    window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+    window = glfwCreateWindow(800, 600, "sGL", NULL, NULL);
 	if (window == NULL){
         std::cout << "Failed to create GLFW window" << std::endl;
 	    glfwTerminate();
@@ -33,31 +33,27 @@ void init_SGL()
 
     //start
     create_shader_program ();
-    shaderProgramSource = get_shader ();
+    shaderID = get_shader ();
+    shaderConnection = glGetUniformLocation(shaderID, "transform");
 }
 
 void render (){
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glBindTexture(GL_TEXTURE_2D, tmp1.texture);
-
-    glm::mat4 transform;
-    //transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-    //transform = glm::rotate(transform, (float)glfwGetTime()/3, glm::vec3(0.0f, 0.0f, 1.0f));
-
-    unsigned int transformLoc = glGetUniformLocation(shaderProgramSource, "transform");
-    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
-
-    glUseProgram(shaderProgramSource);
-    glBindVertexArray(tmp1.VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glUseProgram(shaderID);
+    for (int i = 0; i < objs.size (); i++) {
+        glUniformMatrix4fv(shaderConnection, 1, GL_FALSE, glm::value_ptr(objs[i].transform));
+        glBindTexture(GL_TEXTURE_2D, objs[i].texture);
+        glBindVertexArray(objs[i].VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
 
     glfwSwapBuffers(window);
     glfwPollEvents();
 }
 
-void create_rectangle (sgl_object *tmp) {
+void create_triangle () {
 
     unsigned int VAO;
     unsigned int VBO;
@@ -108,30 +104,50 @@ void create_rectangle (sgl_object *tmp) {
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
-    tmp->VAO = VAO;
-    tmp->VBO = VBO;
-    tmp->texture = texture;
+    sgl_object tmp;
+    tmp.VAO = VAO;
+    tmp.VBO = VBO;
+    tmp.texture = texture;
 
-    //loop render
-
-    //delete
+    objs.push_back (tmp);
 }
 
 
 void destruct_SGL () {
-    glDeleteVertexArrays(1, &tmp1.VAO);
-    glDeleteBuffers(1, &tmp1.VBO);
+
+    for (int i = 0; i < objs.size (); i++) {
+        glDeleteVertexArrays(1, &objs[i].VAO);
+        glDeleteBuffers(1, &objs[i].VBO);
+    }
 
     glfwTerminate();
 }
 
+void move (sgl_object *o, float x, float y) {
+    o->transform = glm::translate(o->transform, glm::vec3(x, y, 0.0f));
+}
 
+//degree
+void rotate (sgl_object *o, float degree) {
+    o->transform = glm::rotate(o->transform, glm::radians(degree), glm::vec3(0.0, 0.0, 1.0));
+}
+
+void scale (sgl_object *o, float factor) {
+    o->transform = glm::scale(o->transform, glm::vec3(factor, factor, factor));
+}
 
 int main (){
 
 	init_SGL ();
-    create_rectangle (&tmp1);
-    //create_rectangle (&tmp2);
+    create_triangle ();
+    create_triangle ();
+    create_triangle ();
+    move (&objs[0], -0.5, -0.5);
+    move (&objs[1], 0.3, 0.5);
+    move (&objs[2], 0.5, -0.5);
+    rotate (&objs[1], 60);
+    scale (&objs[2], 0.5);
+
     while (1) {
         render ();
     }
