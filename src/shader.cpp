@@ -1,6 +1,6 @@
 #include <shader.h>
 
-int shaderProgram;
+unsigned int shaderProgram;
 
 char *read_file (char *name){
     FILE *f = fopen(name, "rb");
@@ -61,6 +61,6 @@ void create_shader_program (){
     delete(fragment_string);
 }
 
-int get_shader () {
+unsigned int get_shader () {
 	return shaderProgram;
 }

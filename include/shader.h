@@ -5,6 +5,6 @@
 #include <iostream>
 
 void create_shader_program ();
-int get_shader ();
+unsigned int get_shader ();
 
 #endif
