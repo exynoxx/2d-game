@@ -3,14 +3,13 @@
 GLFWwindow* window;
 unsigned int shaderID;
 std::vector<sgl_triangle> objs;
-
-/*
+bool shouldClose = false;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (key == GLFW_KEY_ESC && action == GLFW_PRESS)
-        activate_airship();
-}*/
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        shouldClose = true;
+}
 
 void init_SGL()
 {
@@ -22,14 +21,14 @@ void init_SGL()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
     //window init
-    window = glfwCreateWindow(800, 600, "sGL", NULL, NULL);
+    window = glfwCreateWindow(600, 600, "sGL", NULL, NULL);
 	if (window == NULL){
         std::cout << "Failed to create GLFW window" << std::endl;
 	    glfwTerminate();
 	    return;
 	}
 	glfwMakeContextCurrent(window);
-    //glfwSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(window, key_callback);
 
     //glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
