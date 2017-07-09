@@ -8,7 +8,6 @@
 #include <shader.h>
 #include <triangle.h>
 
-
 void init_SGL ();
 void destruct_SGL ();
 

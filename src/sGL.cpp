@@ -4,6 +4,14 @@ GLFWwindow* window;
 unsigned int shaderID;
 std::vector<sgl_triangle> objs;
 
+/*
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESC && action == GLFW_PRESS)
+        activate_airship();
+}*/
+
 void init_SGL()
 {
     //init
@@ -21,7 +29,7 @@ void init_SGL()
 	    return;
 	}
 	glfwMakeContextCurrent(window);
-    //glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    //glfwSetKeyCallback(window, key_callback);
 
     //glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
@@ -49,17 +57,4 @@ void render (){
 
     glfwSwapBuffers(window);
     glfwPollEvents();
-}
-
-int main (){
-
-	init_SGL ();
-    sgl_triangle t;
-    objs.push_back (t);
-
-    while (1) {
-        render ();
-    }
-    destruct_SGL ();
-
 }
