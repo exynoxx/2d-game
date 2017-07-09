@@ -4,11 +4,14 @@ GLFWwindow* window;
 unsigned int shaderID;
 std::vector<sgl_triangle> objs;
 bool close = false;
+sgl_color default_color = {0.2f, 0.3f, 0.3f};
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         close = true;
+    if (key == GLFW_KEY_K && action == GLFW_PRESS)
+        objs[0].rotate (10);
 }
 
 void init_SGL()
@@ -53,8 +56,12 @@ void rectangle_add (sgl_triangle *o) {
     objs.push_back (*o);
 }
 
+void sgl_set_clear_color (sgl_color color) {
+    default_color = color;
+}
+
 void render (){
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(default_color.r, default_color.g, default_color.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(shaderID);
