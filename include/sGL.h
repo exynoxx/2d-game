@@ -11,8 +11,9 @@
 void init_SGL ();
 void destruct_SGL ();
 
+bool shouldClose ();
 void render ();
 
-int main ();
+void rectangle_add (sgl_triangle *o);
 
 #endif

@@ -3,12 +3,12 @@
 GLFWwindow* window;
 unsigned int shaderID;
 std::vector<sgl_triangle> objs;
-bool shouldClose = false;
+bool close = false;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        shouldClose = true;
+        close = true;
 }
 
 void init_SGL()
@@ -43,6 +43,14 @@ void init_SGL()
 
 void destruct_SGL () {
     glfwTerminate();
+}
+
+bool shouldClose () {
+    return (close | glfwWindowShouldClose(window));
+}
+
+void rectangle_add (sgl_triangle *o) {
+    objs.push_back (*o);
 }
 
 void render (){
