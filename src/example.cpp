@@ -1,9 +1,17 @@
 #include <sGL.h>
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        FlipShouldClose ();
+}
+
 int main (){
 
 	init_SGL ();
-    sgl_triangle t1;
+	register_key_event (key_callback);
+
+	sgl_triangle t1;
 	t1.move (-0.5, 0.5);
 	t1.scale (1.2);
 	t1.rotate (90);
@@ -14,6 +22,8 @@ int main (){
 	t2.scale (0.2);
 	t2.rotate (-50);
     rectangle_add (&t2);
+
+
 
     while (!shouldClose()) {
         render ();

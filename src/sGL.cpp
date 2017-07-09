@@ -6,14 +6,6 @@ std::vector<sgl_triangle> objs;
 bool close = false;
 sgl_color default_color = {0.2f, 0.3f, 0.3f};
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        close = true;
-    if (key == GLFW_KEY_K && action == GLFW_PRESS)
-        objs[0].rotate (10);
-}
-
 void init_SGL()
 {
     //init
@@ -31,7 +23,7 @@ void init_SGL()
 	    return;
 	}
 	glfwMakeContextCurrent(window);
-    glfwSetKeyCallback(window, key_callback);
+    //glfwSetKeyCallback(window, key_callback);
 
     //glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
@@ -52,12 +44,20 @@ bool shouldClose () {
     return (close | glfwWindowShouldClose(window));
 }
 
+void FlipShouldClose () {
+    close = !close;
+}
+
 void rectangle_add (sgl_triangle *o) {
     objs.push_back (*o);
 }
 
 void sgl_set_clear_color (sgl_color color) {
     default_color = color;
+}
+
+void register_key_event (void (* keyFuncPtr)(GLFWwindow *, int, int, int, int)) {
+    glfwSetKeyCallback(window, keyFuncPtr);
 }
 
 void render (){

@@ -67,7 +67,7 @@ void sgl_triangle::move (float x, float y) {
 }
 
 void sgl_triangle::rotate (float degree) {
-	transform = glm::rotate(transform, glm::radians(degree), glm::vec3(0.0, 0.0, 1.0));
+	transform = glm::rotate(transform, -glm::radians(degree), glm::vec3(0.0, 0.0, 1.0));
 }
 
 void sgl_triangle::scale (float factor) {

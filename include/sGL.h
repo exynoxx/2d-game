@@ -8,6 +8,7 @@
 #include <shader.h>
 #include <triangle.h>
 
+
 struct sgl_color {
 	float r;
 	float g;
@@ -18,7 +19,9 @@ void init_SGL ();
 void destruct_SGL ();
 
 bool shouldClose ();
+void FlipShouldClose ();
 void sgl_set_clear_color (sgl_color color);
+void register_key_event (void (* keyFuncPtr)(GLFWwindow *, int, int, int, int));
 void render ();
 
 void rectangle_add (sgl_triangle *o);
