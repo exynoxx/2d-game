@@ -27,7 +27,11 @@ int main (){
 
     while (!shouldClose()) {
         render ();
-		sgl_set_clear_color ({(float)glm::sin(glfwGetTime()*3.5), (float)glm::sin((glfwGetTime()-0.5)*1),(float)glm::sin(glfwGetTime()*1.8)});
+		sgl_set_clear_color ({(float)glm::sin(glfwGetTime()),
+                              (float)glm::sin(glfwGetTime()-4),
+                              (float)glm::sin(glfwGetTime()-8)});
+        t1.rotate (1);
+        t2.rotate (-3);
     }
     destruct_SGL ();
 

@@ -2,7 +2,7 @@
 
 GLFWwindow* window;
 unsigned int shaderID;
-std::vector<sgl_triangle> objs;
+std::vector<sgl_triangle *> objs;
 bool close = false;
 sgl_color default_color = {0.2f, 0.3f, 0.3f};
 
@@ -49,7 +49,7 @@ void FlipShouldClose () {
 }
 
 void rectangle_add (sgl_triangle *o) {
-    objs.push_back (*o);
+    objs.push_back (o);
 }
 
 void sgl_set_clear_color (sgl_color color) {
@@ -66,7 +66,7 @@ void render (){
 
     glUseProgram(shaderID);
     for (int i = 0; i < objs.size (); i++) {
-        objs[i].render ();
+        objs[i]->render ();
     }
 
     glfwSwapBuffers(window);
