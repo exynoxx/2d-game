@@ -2,9 +2,13 @@
 
 GLFWwindow* window;
 unsigned int shaderID;
-std::vector<sgl_triangle *> objs;
+std::vector<sgl_triangle *> objr;
+std::vector<sgl_shape *> objs;
 bool close = false;
 sgl_color default_color = {0.2f, 0.3f, 0.3f};
+
+double lastTime = glfwGetTime();
+int frames;
 
 void init_SGL()
 {
@@ -49,6 +53,9 @@ void FlipShouldClose () {
 }
 
 void rectangle_add (sgl_triangle *o) {
+    objr.push_back (o);
+}
+void shape_add (sgl_shape *o) {
     objs.push_back (o);
 }
 
@@ -60,6 +67,18 @@ void register_key_event (void (* keyFuncPtr)(GLFWwindow *, int, int, int, int)) 
     glfwSetKeyCallback(window, keyFuncPtr);
 }
 
+void fps () {
+
+     double currentTime = glfwGetTime();
+     frames++;
+     if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1 sec ago
+         std::cout << frames << std::endl;
+         //glfwSetWindowTitle (window, frames);
+         frames = 0;
+         lastTime += 1.0;
+     }
+}
+
 void render (){
     glClearColor(default_color.r, default_color.g, default_color.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -69,6 +88,7 @@ void render (){
         objs[i]->render ();
     }
 
+    fps ();
     glfwSwapBuffers(window);
     glfwPollEvents();
 }

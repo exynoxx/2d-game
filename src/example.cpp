@@ -1,7 +1,7 @@
 #include <sGL.h>
 
-sgl_triangle *t1;
-sgl_triangle *t2;
+sgl_shape *t1;
+sgl_shape *t2;
 
 float dist = 0.5;
 
@@ -45,8 +45,8 @@ int main (){
 	init_SGL ();
 	register_key_event (key_callback);
 
-    sgl_triangle a;
-    sgl_triangle b;
+    sgl_shape a (1); //triangle
+    sgl_shape b (2); //square
 
     t1 = &a;
     t2 = &b;
@@ -54,12 +54,12 @@ int main (){
 	t1->move (-0.5, 0.5);
 	t1->scale (1.2);
 	t1->rotate (90);
-    rectangle_add (t1);
+    shape_add (t1);
 
 	t2->move (0.5,-0.5);
 	t2->scale (0.2);
 	t2->rotate (-50);
-    rectangle_add (t2);
+    shape_add (t2);
 
     while (!shouldClose()) {
         render ();
@@ -71,3 +71,20 @@ int main (){
     destruct_SGL ();
 
 }
+
+
+/*
+int main (){
+
+	init_SGL ();
+
+    sgl_square p;
+    square_add (&p);
+    sgl_set_clear_color ({0.2f, 0.3f, 0.3f});
+
+    while (!shouldClose()) {
+        render ();
+    }
+    destruct_SGL ();
+
+}*/

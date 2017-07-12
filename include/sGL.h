@@ -7,7 +7,10 @@
 #include <vector>
 #include <shader.h>
 #include <triangle.h>
+#include <shape.h>
 
+#define SGL_TRIANGLE 1;
+#define SGL_SQUARE 2;
 
 struct sgl_color {
 	float r;
@@ -25,5 +28,6 @@ void register_key_event (void (* keyFuncPtr)(GLFWwindow *, int, int, int, int));
 void render ();
 
 void rectangle_add (sgl_triangle *o);
+void shape_add (sgl_shape *o);
 
 #endif
