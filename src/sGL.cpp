@@ -2,7 +2,6 @@
 
 GLFWwindow* window;
 unsigned int shaderID;
-std::vector<sgl_triangle *> objr;
 std::vector<sgl_shape *> objs;
 bool close = false;
 sgl_color default_color = {0.2f, 0.3f, 0.3f};
@@ -52,10 +51,7 @@ void FlipShouldClose () {
     close = !close;
 }
 
-void rectangle_add (sgl_triangle *o) {
-    objr.push_back (o);
-}
-void shape_add (sgl_shape *o) {
+void sgl_render_add (sgl_shape *o) {
     objs.push_back (o);
 }
 

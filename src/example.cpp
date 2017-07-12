@@ -3,7 +3,7 @@
 sgl_shape *t1;
 sgl_shape *t2;
 
-float dist = 0.5;
+float dist = 0.3;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -54,12 +54,12 @@ int main (){
 	t1->move (-0.5, 0.5);
 	t1->scale (1.2);
 	t1->rotate (90);
-    shape_add (t1);
+    sgl_render_add (t1);
 
 	t2->move (0.5,-0.5);
 	t2->scale (0.2);
 	t2->rotate (-50);
-    shape_add (t2);
+    sgl_render_add (t2);
 
     while (!shouldClose()) {
         render ();
@@ -71,20 +71,3 @@ int main (){
     destruct_SGL ();
 
 }
-
-
-/*
-int main (){
-
-	init_SGL ();
-
-    sgl_square p;
-    square_add (&p);
-    sgl_set_clear_color ({0.2f, 0.3f, 0.3f});
-
-    while (!shouldClose()) {
-        render ();
-    }
-    destruct_SGL ();
-
-}*/
