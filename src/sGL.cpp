@@ -1,8 +1,10 @@
 #include <sGL.h>
 
 GLFWwindow* window;
-unsigned int shaderID;
-std::vector<sgl_shape *> objs;
+unsigned int local_textureID;
+unsigned int local_colorID;
+std::vector<sgl_shape *> objs_texture;
+std::vector<sgl_shape *> objs_color;
 bool close = false;
 sgl_color default_color = {0.2f, 0.3f, 0.3f};
 
@@ -35,8 +37,10 @@ void init_SGL()
 	}
 
     //start
-    create_shader_program ();
-    shaderID = get_shader ();
+    local_textureID = create_shader_program ("shaders/vertex.vs", "shaders/texture.fs");
+    local_colorID = create_shader_program ("shaders/vertex.vs", "shaders/color.fs");
+    set_shaderID_textue (local_textureID);
+    set_shaderID_color (local_colorID);
 }
 
 void destruct_SGL () {
@@ -51,8 +55,12 @@ void FlipShouldClose () {
     close = !close;
 }
 
-void sgl_render_add (sgl_shape *o) {
-    objs.push_back (o);
+void sgl_render_add_texture (sgl_shape *o) {
+    objs_texture.push_back (o);
+}
+
+void sgl_render_add_color (sgl_shape *o) {
+    objs_color.push_back (o);
 }
 
 void sgl_set_clear_color (sgl_color color) {
@@ -79,9 +87,14 @@ void render (){
     glClearColor(default_color.r, default_color.g, default_color.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(shaderID);
-    for (int i = 0; i < objs.size (); i++) {
-        objs[i]->render ();
+    glUseProgram(local_textureID);
+    for (int i = 0; i < objs_texture.size (); i++) {
+        objs_texture[i]->render ();
+    }
+
+    glUseProgram(local_colorID);
+    for (int i = 0; i < objs_color.size (); i++) {
+        objs_color[i]->render ();
     }
 
     fps ();

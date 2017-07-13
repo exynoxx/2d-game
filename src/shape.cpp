@@ -2,10 +2,18 @@
 
 unsigned int shaderConn;
 
-sgl_shape::sgl_shape (int mode) {
+sgl_shape::sgl_shape (int mode, char *filname, unsigned int hexcolor) {
 	this->mode = mode;
-	int shaderID = get_shader ();
-    shaderConn = glGetUniformLocation(shaderID, "transform");
+	if (filname == NULL) {
+		glGetUniformLocation(get_shaderID_color (), "transform");
+	} else {
+		glGetUniformLocation(get_shaderID_textue (), "transform");
+	}
+
+	float r = ((hexcolor >> 16) & 0xFF) / 255.0;
+    float g = ((hexcolor >> 8) & 0xFF) / 255.0;
+    float b = ((hexcolor) & 0xFF) / 255.0;
+
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -18,11 +26,11 @@ sgl_shape::sgl_shape (int mode) {
 	if (mode == 2) {
 
 		float vertices[] = {
-	         // positions           // texture coords
-	         0.5f,  0.5f, 0.0f,     1.0f, 0.0f, // top right
-	         0.5f, -0.5f, 0.0f,     1.0f, 1.0f, // bottom right
-	        -0.5f, -0.5f, 0.0f,		0.0f, 1.0f, // bottom left
-	        -0.5f,  0.5f, 0.0f,  	0.0f, 0.0f  // top left
+	         // positions           //color 	//texture coords
+	         0.5f,  0.5f, 0.0f, 	r, g, b,	1.0f, 0.0f, // top right
+	         0.5f, -0.5f, 0.0f, 	r, g, b,	1.0f, 1.0f, // bottom right
+	        -0.5f, -0.5f, 0.0f, 	r, g, b,	0.0f, 1.0f, // bottom left
+	        -0.5f,  0.5f, 0.0f, 	r, g, b,	0.0f, 0.0f  // top left
 	    };
 
 		unsigned int indices[] = {  //we start from 0!
@@ -39,9 +47,10 @@ sgl_shape::sgl_shape (int mode) {
 
 	} else {
 		float vertices[] = {
-	        -0.5f, -0.5f, 0.0f,     0.0f, 1.0f,
-	         0.5f, -0.5f, 0.0f,     1.0f, 1.0f,
-	         0.0f,  0.5f, 0.0f,     0.5f, 0.0f
+			 //positions			//color		//texture coords
+	        -0.5f, -0.5f, 0.0f, 	r, g, b,	0.0f, 1.0f,
+	         0.5f, -0.5f, 0.0f, 	r, g, b,	1.0f, 1.0f,
+	         0.0f,  0.5f, 0.0f, 	r, g, b,	0.5f, 0.0f
 	    };
 
 		unsigned int indices[] = {
@@ -54,11 +63,17 @@ sgl_shape::sgl_shape (int mode) {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	}
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+	//position
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	//color
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	//texture coord
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+
 
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -67,15 +82,18 @@ sgl_shape::sgl_shape (int mode) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); //GL_LINEAR
 
-    int width, height, nrChannels;
-    unsigned char *data = SOIL_load_image("src/tree.jpg", &width, &height, &nrChannels, 0);
-    if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    SOIL_free_image_data(data);
+	if (filname != NULL) {
+		int width, height, nrChannels;
+	    unsigned char *data = SOIL_load_image(filname, &width, &height, &nrChannels, 0);
+	    if (data) {
+	        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	        glGenerateMipmap(GL_TEXTURE_2D);
+	    } else {
+	        std::cout << "Failed to load texture" << std::endl;
+	    }
+	    SOIL_free_image_data(data);
+	}
+
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO
 	//as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
@@ -86,6 +104,12 @@ sgl_shape::sgl_shape (int mode) {
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs
 	//(nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
+
+	if (filname == NULL) {
+		sgl_render_add_color (this);
+	} else {
+		sgl_render_add_texture (this);
+	}
 }
 
 sgl_shape::~sgl_shape () {

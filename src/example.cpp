@@ -45,8 +45,8 @@ int main (){
 	init_SGL ();
 	register_key_event (key_callback);
 
-    sgl_shape a (1); //triangle
-    sgl_shape b (2); //square
+    sgl_shape a (1, "res/tree.jpg"); //triangle
+    sgl_shape b (2, NULL, 0x0022FF); //square
 
     t1 = &a;
     t2 = &b;
@@ -54,12 +54,12 @@ int main (){
 	t1->move (-0.5, 0.5);
 	t1->scale (1.2);
 	t1->rotate (90);
-    sgl_render_add (t1);
+    //sgl_render_add (t1);
 
 	t2->move (0.5,-0.5);
-	t2->scale (0.2);
+	t2->scale (0.3);
 	t2->rotate (-50);
-    sgl_render_add (t2);
+    //sgl_render_add (t2);
 
     while (!shouldClose()) {
         render ();
