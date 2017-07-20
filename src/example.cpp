@@ -45,28 +45,17 @@ int main (){
 	init_SGL ();
 	register_key_event (key_callback);
 
-    sgl_shape a (1, "res/tree.jpg"); //triangle
-    sgl_shape b (2, NULL, 0x0022FF); //square
+    sgl_shape *a = sgl_create_square_color (0x00FFAA);
+    sgl_shape *b = sgl_create_triangle_texture ("res/tree.jpg");
 
-    t1 = &a;
-    t2 = &b;
-
-	t1->move (-0.5, 0.5);
-	t1->scale (1.2);
-	t1->rotate (90);
-    //sgl_render_add (t1);
-
-	t2->move (0.5,-0.5);
-	t2->scale (0.3);
-	t2->rotate (-50);
-    //sgl_render_add (t2);
+    a->move (-0.5, 0.5);
+    b->move (0.5, -0.5);
 
     while (!shouldClose()) {
         render ();
 		sgl_set_clear_color ({(float)glm::sin(glfwGetTime()),
                               (float)glm::sin(glfwGetTime()-4),
                               (float)glm::sin(glfwGetTime()-8)});
-        t2->rotate (5);
     }
     destruct_SGL ();
 

@@ -1,10 +1,15 @@
 #include <sGL.h>
 
+/* WINDOW */
 GLFWwindow* window;
-unsigned int local_textureID;
-unsigned int local_colorID;
+
+/* SHADER/RENDER */
+shader shader_texture;
+shader shader_color;
 std::vector<sgl_shape *> objs_texture;
 std::vector<sgl_shape *> objs_color;
+
+/* SETTINGS */
 bool close = false;
 sgl_color default_color = {0.2f, 0.3f, 0.3f};
 
@@ -37,10 +42,8 @@ void init_SGL()
 	}
 
     //start
-    local_textureID = create_shader_program ("shaders/vertex.vs", "shaders/texture.fs");
-    local_colorID = create_shader_program ("shaders/vertex.vs", "shaders/color.fs");
-    set_shaderID_textue (local_textureID);
-    set_shaderID_color (local_colorID);
+    shader_texture.create_shader_program ("shaders/vertex.vs", "shaders/texture.fs");
+    shader_color.create_shader_program ("shaders/vertex.vs", "shaders/color.fs");
 }
 
 void destruct_SGL () {
@@ -53,14 +56,6 @@ bool shouldClose () {
 
 void FlipShouldClose () {
     close = !close;
-}
-
-void sgl_render_add_texture (sgl_shape *o) {
-    objs_texture.push_back (o);
-}
-
-void sgl_render_add_color (sgl_shape *o) {
-    objs_color.push_back (o);
 }
 
 void sgl_set_clear_color (sgl_color color) {
@@ -83,16 +78,46 @@ void fps () {
      }
 }
 
+/* --- SQUARE --- */
+sgl_shape *sgl_create_square_color (unsigned int hex) {
+    static sgl_shape tmp (&shader_color, 2, NULL, hex);
+    objs_color.push_back (&tmp);
+    return &tmp;
+}
+
+sgl_shape *sgl_create_square_texture (char *filname) {
+    static sgl_shape tmp (&shader_texture, 2,filname);
+    objs_texture.push_back (&tmp);
+    return &tmp;
+}
+
+/* --- TRIANGLE --- */
+sgl_shape *sgl_create_triangle_color (unsigned int hex) {
+    static sgl_shape tmp (&shader_color, 1, NULL, hex);
+    objs_color.push_back (&tmp);
+    return &tmp;
+}
+
+sgl_shape *sgl_create_triangle_texture (char *filname) {
+    static sgl_shape tmp (&shader_texture, 1,filname);
+    objs_texture.push_back (&tmp);
+    return &tmp;
+}
+
+
+
+
+
 void render (){
     glClearColor(default_color.r, default_color.g, default_color.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(local_textureID);
+    glUseProgram(shader_texture.ID);
     for (int i = 0; i < objs_texture.size (); i++) {
         objs_texture[i]->render ();
     }
 
-    glUseProgram(local_colorID);
+    glUseProgram(shader_color.ID);
     for (int i = 0; i < objs_color.size (); i++) {
         objs_color[i]->render ();
     }

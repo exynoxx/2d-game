@@ -1,9 +1,6 @@
 #include <shader.h>
 
-unsigned int shaderID_textue;
-unsigned int shaderID_color;
-
-char *read_file (char *name){
+char *shader::read_file (char *name){
     FILE *f = fopen(name, "rb");
     fseek(f, 0, SEEK_END);
     int fsize = ftell(f);
@@ -16,7 +13,11 @@ char *read_file (char *name){
     return string;
 }
 
-unsigned int create_shader_program (char *vs, char *fs){
+shader::shader (char *vs, char *fs) {
+    create_shader_program (vs, fs);
+}
+
+unsigned int shader::create_shader_program (char *vs, char *fs){
 
     /* --- VERTEX --- */
     char *vertex_string = read_file (vs);
@@ -61,21 +62,6 @@ unsigned int create_shader_program (char *vs, char *fs){
     delete(vertex_string);
     delete(fragment_string);
 
+    ID = shaderProgram;
     return shaderProgram;
-}
-
-unsigned int get_shaderID_textue () {
-    return shaderID_textue;
-}
-
-unsigned int get_shaderID_color () {
-    return shaderID_color;
-}
-
-void set_shaderID_textue (unsigned int id) {
-    shaderID_textue = id;
-}
-
-void set_shaderID_color (unsigned int id) {
-    shaderID_color = id;
 }

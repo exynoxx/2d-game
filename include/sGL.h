@@ -24,9 +24,12 @@ bool shouldClose ();
 void FlipShouldClose ();
 void sgl_set_clear_color (sgl_color color);
 void register_key_event (void (* keyFuncPtr)(GLFWwindow *, int, int, int, int));
-void render ();
 
-void sgl_render_add_texture (sgl_shape *o);
-void sgl_render_add_color (sgl_shape *o);
+sgl_shape *sgl_create_square_color (unsigned int hex);
+sgl_shape *sgl_create_square_texture (char *filname);
+sgl_shape *sgl_create_triangle_color (unsigned int hex);
+sgl_shape *sgl_create_triangle_texture (char *filname);
+
+void render ();
 
 #endif

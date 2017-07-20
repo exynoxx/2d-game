@@ -1,14 +1,10 @@
 #include <shape.h>
 
-unsigned int shaderConn;
-
-sgl_shape::sgl_shape (int mode, char *filname, unsigned int hexcolor) {
+sgl_shape::sgl_shape (shader *sh, int mode, char *filname, unsigned int hexcolor) {
 	this->mode = mode;
-	if (filname == NULL) {
-		glGetUniformLocation(get_shaderID_color (), "transform");
-	} else {
-		glGetUniformLocation(get_shaderID_textue (), "transform");
-	}
+	shaderConn = sh->ID;
+
+	transformLoc = glGetUniformLocation(shaderConn, "transform");
 
 	float r = ((hexcolor >> 16) & 0xFF) / 255.0;
     float g = ((hexcolor >> 8) & 0xFF) / 255.0;
@@ -104,12 +100,6 @@ sgl_shape::sgl_shape (int mode, char *filname, unsigned int hexcolor) {
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs
 	//(nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
-
-	if (filname == NULL) {
-		sgl_render_add_color (this);
-	} else {
-		sgl_render_add_texture (this);
-	}
 }
 
 sgl_shape::~sgl_shape () {
@@ -131,7 +121,7 @@ void sgl_shape::scale (float factor) {
 }
 
 void sgl_shape::render () {
-	glUniformMatrix4fv(shaderConn, 1, GL_FALSE, glm::value_ptr(transform));
+	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glBindVertexArray(VAO);
 

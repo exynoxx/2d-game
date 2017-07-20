@@ -13,7 +13,8 @@
 class sgl_shape {
 
 public:
-	sgl_shape (int mode, char *filname = NULL, unsigned int hexcolor = 0xFFffFF);
+	sgl_shape (shader *sh, int mode, char *filname = NULL, unsigned int hexcolor = 0xFFffFF);
+	sgl_shape () {};
 	~sgl_shape ();
 
 	void move (float x, float y);
@@ -26,6 +27,8 @@ private:
 	unsigned int EBO;
 	unsigned int texture;
 	unsigned int mode;
+	unsigned int shaderConn;
+	unsigned int transformLoc;
 	glm::mat4 transform;
 };
 
