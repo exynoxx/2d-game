@@ -10,7 +10,6 @@ sgl_shape::sgl_shape (shader *sh, int mode, char *filname, unsigned int hexcolor
     float g = ((hexcolor >> 8) & 0xFF) / 255.0;
     float b = ((hexcolor) & 0xFF) / 255.0;
 
-
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);

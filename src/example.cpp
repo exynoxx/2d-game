@@ -45,11 +45,11 @@ int main (){
 	init_SGL ();
 	register_key_event (key_callback);
 
-    sgl_shape *a = sgl_create_square_color (0x00FFAA);
-    sgl_shape *b = sgl_create_triangle_texture ("res/tree.jpg");
+    t1 = sgl_create_square_color (0x00FFAA);
+    t2 = sgl_create_triangle_texture ("res/tree.jpg");
 
-    a->move (-0.5, 0.5);
-    b->move (0.5, -0.5);
+    t1->move (-0.5, 0.5);
+    t2->move (0.5, -0.5);
 
     while (!shouldClose()) {
         render ();

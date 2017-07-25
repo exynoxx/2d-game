@@ -106,8 +106,6 @@ sgl_shape *sgl_create_triangle_texture (char *filname) {
 
 
 
-
-
 void render (){
     glClearColor(default_color.r, default_color.g, default_color.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
