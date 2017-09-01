@@ -7,6 +7,7 @@ out vec3 outColor;
 out vec2 outTexCoord;
 
 uniform mat4 transform;
+uniform mat4 projection;
 
 void main()
 {
